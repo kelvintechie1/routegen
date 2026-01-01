@@ -208,3 +208,6 @@ __marimo__/
 
 # Ignore the output folder
 output/
+# Ignore the generated BIRD config file
+container/bird.conf
+container/Dockerfile
