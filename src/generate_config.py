@@ -1,10 +1,10 @@
-from src.objects import Route, Neighbor
+from objects import Route, Neighbor
 from jinja2 import Environment, FileSystemLoader
 from ipaddress import IPv4Address
 from hashlib import sha256
 
-def writeConfig(path: str, config: str):
-    with open(f"{path}/config.txt") as file:
+def writeConfig(path: str, config: str, fileName: str = "config.txt"):
+    with open(f"{path}/{fileName}") as file:
         file.write(config)
 
 def config_ios():
@@ -17,7 +17,7 @@ def config_junos(routes: list[Route], path: str):
     
     writeConfig(path=path, config="\n".join(config))
 
-def config_container(path: str, routes: list[Route], neighbors: list[Neighbor] = [Neighbor("10.101.11.221", "100")], rid: IPv4Address = IPv4Address("100.100.100.100")):
+def config_container(path: str, routes: list[Route], neighbors: list[Neighbor], rid: IPv4Address):
     birdTemplate = Environment(loader=FileSystemLoader(path)).get_template("bird.conf.j2")
     birdContent = birdTemplate.render(
         rid=str(rid),
@@ -25,13 +25,15 @@ def config_container(path: str, routes: list[Route], neighbors: list[Neighbor] =
         neighbors=neighbors
     )
 
+    birdContentHash = str(sha256(birdContent.encode("utf-8")).hexdigest())
     dockerTemplate = Environment(loader=FileSystemLoader(path)).get_template("Dockerfile.j2")
     dockerContent = dockerTemplate.render(
-        hash=str(sha256(birdContent.encode("utf-8")).hexdigest())
+        hash=birdContentHash
     )
 
-    with open(f"{path}/bird.conf", "w") as file:
-        file.write(birdContent)
+    for item in [f"{path}/bird.conf", f"{path}/../output/{birdContentHash}.bird.conf"]:
+        with open(item, "w") as file:
+            file.write(birdContent)
     
     with open(f"{path}/Dockerfile", "w") as file:
         file.write(dockerContent)

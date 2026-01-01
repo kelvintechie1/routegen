@@ -1,0 +1,15 @@
+basic:
+  platform:
+  desiredNumOfRoutes:
+  configExportLocation:
+  configFileName(?):
+container:
+  localAS:
+  neighbors:
+    - address:
+      asn:
+    - address:
+      asn:
+  rid:
+  imageExportLocation:
+policy:

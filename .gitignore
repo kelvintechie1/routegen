@@ -211,3 +211,4 @@ output/
 # Ignore the generated BIRD config file
 container/bird.conf
 container/Dockerfile
+container/container.tar

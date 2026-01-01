@@ -1,6 +1,6 @@
 from ipaddress import IPv4Network, IPv4Address
 from random import randint
-from src.objects import Route
+from objects import Route
 
 def test_global(address: IPv4Address):
     if not address.is_global:
