@@ -1,0 +1,38 @@
+router id {{ rid }};
+
+protocol bgp {
+    local as 1;
+    multihop;
+    {%- for neighbor in neighbors %}
+    neighbor {{ neighbor.address }} as {{ neighbor.asn }};
+    {%- endfor %}
+    ipv4 {
+        export filter {
+            if source = RTS_STATIC then {
+                accept;
+            }
+            reject;
+        };
+        import none;
+    };
+    ipv6 {
+        export filter {
+            if source = RTS_STATIC then {
+                accept;
+            }
+            reject;
+        };
+        import none;
+    };
+}
+
+protocol static {
+    ipv4;
+{%- for route in routes %}
+    route {{ route.network }} blackhole {
+        {%- for as in route.aspath %}
+        bgp_path.prepend({{ as }});
+        {%- endfor %}
+    };
+{%- endfor %}
+}
