@@ -3,7 +3,10 @@ from src.generate_routes import generateRoutes
 from src.generate_config import platforms
 from os import path
 from yaml import safe_load
+import click as cli
 
+@cli.command()
+@cli.option("-c", "--config", help="Specify path (including file name) to the config YAML file. By default, routegen assumes a config.yml file in the current working directory", type=str, default="config.yml")
 def main() -> None:
     routes = []
     existingPrefixes = []
@@ -23,3 +26,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
