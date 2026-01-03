@@ -1,19 +1,72 @@
 basic:
-  platform:
-  desiredNumOfRoutes:
-  configExportLocation:
-  configFileName(?):
-
+  platforms:
+    - platform1
+    - platform2
+  protocols:
+    - bgp
+  addressFamily:
+  routeSource: # random or mrt or partial_random_mrt
+mrt:
+  collector:
+bgp:
+  generateRoutes:
+    desiredNumOfRoutes:
+    routeSeed:
+    nextHop:
+    origin:
+  generateAS:
+    mode:
+    minPath:
+    maxPath:
+    includePrivateAS:
+  generateCommunities:
+    mode:
+    minCommunities:
+    maxCommunities:
+    wellKnownCommunities:
+  peeringType: # Dual stack or separate v4/v6 peerings
+ospf:
+  generateRoutes:
+    desiredNumOfRoutes:
+    routeSeed:
+    routeType:
+devices:
+  general:
+    configExportLocation:
+    configExportFileName:
+  ios:
+    localAS:
+    vrf:
+    deployment:
+      address:
+  junos:
+    vrf:
+    bgpGroup:
+    deployment:
+      address:
+  bird:
+  frr:
 container:
   localAS:
   neighbors:
     - address:
       asn:
     - address:
-      asn:
-  rid:
-  imageExportLocation:
+      asn: #
+  rid: xxx.xxx.xxx.xxx
+  configExportLocation: path
+  imageExportLocation: path
+  imageExportFileName: filename
   attributes:
     - name: Comment
       value: blank
+  networking:
+    mode:
+    static:
+      ipv4:
+        address:
+        gateway:
+      ipv6:
+        address:
+        gateway:
 policy:

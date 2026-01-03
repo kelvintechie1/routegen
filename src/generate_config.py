@@ -1,3 +1,4 @@
+"""Contains all functions required to generate configuration for network devices/the routebox container"""
 from src.objects import Route, Neighbor
 from src.build_container import buildContainer
 from jinja2 import Environment, FileSystemLoader
@@ -7,10 +8,12 @@ from collections import defaultdict
 from datetime import datetime
 
 def writeConfig(path: str, config: str, fileName: str = "config.txt") -> None:
+    """Simple function to export the generated configuration to a text file on disk"""
     with open(f"{path}/{fileName}", "w") as file:
         file.write(config)
 
 def config_ios(routes: list[Route], path: str, localAS: int = None, vrf: str = "") -> None:
+    """Generate route/policy configurations for Cisco IOS and IOS-XE platforms"""
     config = []
     baseRouteCommand = f"ip route vrf {vrf}" if vrf else "ip route"
     for route in routes:
@@ -39,7 +42,12 @@ def config_ios(routes: list[Route], path: str, localAS: int = None, vrf: str = "
     
     writeConfig(path=path, config="\n".join([x for x in config if x]))
 
+def config_iosxr():
+    """Generate route/policy configuration for Cisco IOS-XR-based platforms"""
+    pass
+
 def config_junos(routes: list[Route], path: str, vrf: str = "", bgpGroup: str = None) -> None:
+    """Generate route/policy configurations for Juniper Junos-based platforms"""
     config = []
     baseCommand = f"set routing-instances {vrf}" if vrf else "set"
     baseRouteCommand = " ".join([baseCommand, "routing-options static route"])
@@ -61,7 +69,7 @@ def config_junos(routes: list[Route], path: str, vrf: str = "", bgpGroup: str = 
     writeConfig(path=path, config="\n".join(config))
 
 def config_container(path: str, outputPath: str, routes: list[Route], neighbors: list[Neighbor], rid: IPv4Address, userAttributes: dict[str, str]) -> None:
-    
+    """Generate all required configuration to build the routebox container"""
     templateLoader = (lambda fileName: Environment(loader=FileSystemLoader(path)).get_template(fileName))
 
     birdTemplate = templateLoader("bird.conf.j2")
@@ -86,6 +94,7 @@ def config_container(path: str, outputPath: str, routes: list[Route], neighbors:
     }
     entrypointTemplate = templateLoader("docker-entrypoint.sh.j2")
     entrypointContent = entrypointTemplate.render(
+        neighbors=neighbors,
         userAttributes=userAttributes,
         sysAttributes=sysAttributes
     )

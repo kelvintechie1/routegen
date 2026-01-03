@@ -1,13 +1,20 @@
+"""Contains all functions needed when generating a route object, its associated network, and any associated path/route attributes"""
 from ipaddress import IPv4Network, IPv4Address
 from random import randint
 from src.objects import Route
 
+# The tests are defined as such:
+# def test_{testname}(address: IPv4Address) -> bool
+# Ensure that the test returns True/False based on the result
+# Add the function object itself for the test as a value to the enabledTest dict (key = description of the test)
 def test_global(address: IPv4Address) -> bool:
+    """Test to make sure that the address is a valid globally routable address"""
     if not address.is_global:
         return False
     return True
 
 def runTests(address: IPv4Address) -> bool:
+    """Function to run the enabled tests and handle/raise failures/exceptions as required"""
     enabledTests = {
         "Test to make sure that the address is a valid globally routable address": test_global
     }
@@ -17,6 +24,7 @@ def runTests(address: IPv4Address) -> bool:
     return True
 
 def generate_network() -> str:
+    """Generate a randomized IPv4/IPv6 network, based on provided constraints in the configuration"""
     while True:
         # Generate random IP address between 1.0.0.0 and 223.255.255.255 (0.0.0.0/8 = reserved, 224.0.0.0/4 = multicast, 240.0.0.0/4 = reserved) and make sure that it passes all defined tests
         address = IPv4Address(randint(16777216, 3758096383))
@@ -29,9 +37,8 @@ def generate_network() -> str:
 
         return f"{str(address)}/{prefixLength}"
     
-def generate_aspath(mode: str = "2byte", include_privateAS: bool = False, maxLength: int = 10) -> list[str]:
-    # Generate random AS-PATH
-    # Valid modes: 2byte, 4byte, 24byte
+def generate_aspath(mode: str, include_privateAS: bool, maxLength: int) -> list[str]:
+    """Generate a random AS-PATH sequence containing 2 and/or 4-byte private and/or public ASNs, based on provided constraints in the configuration"""
     aspath = []
     match (mode, include_privateAS):
         case ("2byte", True):
@@ -59,6 +66,7 @@ def generate_aspath(mode: str = "2byte", include_privateAS: bool = False, maxLen
     return aspath
 
 def generateRoutes() -> Route:
+    """Construct a route object"""
     network = generate_network()
     aspath = generate_aspath()
     return Route(network=IPv4Network(network, strict=False), aspath=aspath)

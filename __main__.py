@@ -6,12 +6,12 @@ from yaml import safe_load
 import click as cli
 
 @cli.command()
-@cli.option("-c", "--config", help="Specify path (including file name) to the config YAML file. By default, routegen assumes a config.yml file in the current working directory", type=str, default="config.yml")
-def main() -> None:
+@cli.option("-c", "--configfile", help="Specify path (including file name) to the config YAML file. By default, routegen assumes a config.yml file in the current working directory", type=str, default="config.yml")
+def main(configfile: str) -> None:
     routes = []
     existingPrefixes = []
 
-    with open("config.yml") as configFile:
+    with open(configfile) as configFile:
         config = safe_load(configFile)
 
     counter = 0
