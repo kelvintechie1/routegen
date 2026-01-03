@@ -213,3 +213,4 @@ container/bird.conf
 container/Dockerfile
 container/container.tar
 config.yml
+.idea/
